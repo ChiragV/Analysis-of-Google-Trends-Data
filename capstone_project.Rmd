@@ -15,7 +15,7 @@ Data analysis using Google Trends
 
 #Bitcoin price v/s "Bitcoin" search
 
-## Analysing Bitcoin price movement with Google search for term "Bitcoin"
+Analysing Bitcoin price movement with Google search for term "Bitcoin"
 
 
 
@@ -26,7 +26,7 @@ library(gtrendsR)
 library(wordcloud2)
 ```
 
-### Step1 : get bitCoin price history 
+### Step 1 : Get bitCoin price history 
 - Go to <a href="https://charts.bitcoin.com/chart/price">https://charts.bitcoin.com/chart/price</a>
 - Click on Tools button
 - Download CSV
@@ -50,7 +50,7 @@ head(newbitcoinPrice,2)
 
 ```
 
-### Step2 : get Bitcoin google trends data
+### Step 2 : Get Bitcoin google trends data
 
 - Go to  <a href="https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin">https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin</a>
 - Download CSV file from there
@@ -70,7 +70,8 @@ head(bitCoinPriceAndTrends,3)
 
 ```
 
-### Step3 : Plotting Bit coin search Trends v/s price 
+### Step 3 : Plotting 
+Plotting Bit coin search Trends v/s price 
 
 ```{r warning=FALSE}
 
@@ -93,8 +94,8 @@ title = "Google Bitcoin Serach Trends Vs Bitcoin Price Percentage Change",xaxis 
 ```
 
 <hr style="border: 2px solid #357FAA;"/>
-
-## We frequently query "how to ...." on Google, so here is analysis which "how to" query we do the most.
+# How to...search analysis
+We frequently query "how to ...." on Google, so here is analysis which "how to" query we do the most.
 
 <img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/Google_how_to.png" />
 

@@ -2,14 +2,18 @@
 title: "Mid-Term Draft Project"
 author: "Chirag Vithalani"
 date: "March 18, 2018"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 <hr style="border: 2px solid #357FAA;"/>
-#Data analysis using Google Trends
+Data analysis using Google Trends
 
 <hr style="border: 2px solid #357FAA;"/>
 
+#Bitcoin price v/s "Bitcoin" search
 
 ## Analysing Bitcoin price movement with Google search for term "Bitcoin"
 
@@ -22,7 +26,7 @@ library(gtrendsR)
 library(wordcloud2)
 ```
 
-## Step1 : get bitCoin price history 
+### Step1 : get bitCoin price history 
 - Go to <a href="https://charts.bitcoin.com/chart/price">https://charts.bitcoin.com/chart/price</a>
 - Click on Tools button
 - Download CSV
@@ -46,7 +50,7 @@ head(newbitcoinPrice,2)
 
 ```
 
-## Step2 : get Bitcoin google trends data
+### Step2 : get Bitcoin google trends data
 
 - Go to  <a href="https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin">https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin</a>
 - Download CSV file from there
@@ -66,7 +70,7 @@ head(bitCoinPriceAndTrends,3)
 
 ```
 
-## Step3 : Plotting Bit coin search Trends v/s price 
+### Step3 : Plotting Bit coin search Trends v/s price 
 
 ```{r warning=FALSE}
 
@@ -162,7 +166,7 @@ myfunction <- function(timeline)
 
 
 ```{r}
-howToData <- read.csv("./How_to_Interesting.csv")
+howToData <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/How_to_Interesting.csv")
 plot_geo(howToData) %>%
   add_trace(
         

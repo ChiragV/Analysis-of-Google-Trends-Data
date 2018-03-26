@@ -1,0 +1,172 @@
+---
+title: "Mid-Term Draft Project"
+author: "Chirag Vithalani"
+date: "March 18, 2018"
+output: html_document
+---
+
+<hr style="border: 2px solid #357FAA;"/>
+#Data analysis using Google Trends
+
+<hr style="border: 2px solid #357FAA;"/>
+
+
+## Analysing Bitcoin price movement with Google search for term "Bitcoin"
+
+
+
+```{r setup, include=FALSE}
+library(plotly)
+library(data.table)
+library(gtrendsR)
+library(wordcloud2)
+```
+
+## Step1 : get bitCoin price history 
+- Go to <a href="https://charts.bitcoin.com/chart/price">https://charts.bitcoin.com/chart/price</a>
+- Click on Tools button
+- Download CSV
+
+```{r}
+
+#setwd("~/final_project")
+
+#reading 
+bitcoinPrice <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/bitcoin/BitCoin_price_updated.csv")
+
+#Formatting date
+bitcoinPrice$newdate<-as.Date(bitcoinPrice$Date, "%m/%d/%Y")
+
+#Price started moving only after year 2016, so reading data only from year 2016
+newbitcoinPrice<-subset(bitcoinPrice, newdate > as.Date("2016-01-01"))
+#converting price movement to percentage, as google search shows relative index value
+newbitcoinPrice$pricePercent<-(newbitcoinPrice$Bitcoin.Price*100)/max(newbitcoinPrice$Bitcoin.Price)
+head(newbitcoinPrice,2)
+
+
+```
+
+## Step2 : get Bitcoin google trends data
+
+- Go to  <a href="https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin">https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin</a>
+- Download CSV file from there
+
+```{r}
+
+bitcoinTrends <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/bitcoin/BitCoin_Trends_updated.csv")
+
+#Formatting date
+bitcoinTrends$newdate<-as.Date(bitcoinTrends$Week, "%m/%d/%Y")
+
+head(bitcoinTrends,2)
+
+bitCoinPriceAndTrends<-merge(bitcoinTrends,newbitcoinPrice)
+
+head(bitCoinPriceAndTrends,3)
+
+```
+
+## Step3 : Plotting Bit coin search Trends v/s price 
+
+```{r warning=FALSE}
+
+
+m <- list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 100,
+  pad = 4
+)
+
+
+plot_ly(x = ~bitCoinPriceAndTrends$newdate) %>%
+add_lines(y = ~bitCoinPriceAndTrends$pricePercent, name = "Actual Price Percentage", line = list(shape = "Actual Price Percentage")) %>%
+add_lines(y = ~bitCoinPriceAndTrends$Bitcoin...United.States., name = "Google Bitcoin Serach Trends", line = list(shape = "Google Bitcoin Serach Trends"))%>%
+layout(autosize = F, width = 1022, height = 500, margin = m,font = list(family = "\"Droid Sans\", sans-serif"),
+title = "Google Bitcoin Serach Trends Vs Bitcoin Price Percentage Change",xaxis = list(title = "Timeline"),yaxis = list(title = "Bitcoin Percentage"))
+
+```
+
+<hr style="border: 2px solid #357FAA;"/>
+
+## We frequently query "how to ...." on Google, so here is analysis which "how to" query we do the most.
+
+<img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/Google_how_to.png" />
+
+
+
+To get "how to query", we use *Gtrends* R package.
+We query "how to .." term for year 2012 to 2017 and showing most searched terms using wordcloud.
+
+
+```{r}
+
+
+# Writing function to display wordcloud
+
+myfunction <- function(timeline)
+{
+
+  HowTo2017<-gtrends("How to", geo="US", time = timeline)
+  HowTo2017<-HowTo2017$related_queries
+  HowTo2017$subjectNew<-gsub('%','',HowTo2017$subject)
+  HowTo2017[which(HowTo2017[,7]=='<1', arr.ind=TRUE), 7] <-0
+  HowTo2017[which(HowTo2017[,7]=='Breakout', arr.ind=TRUE), 7] <-9999
+  HowTo2017$subjectNew<-as.numeric(gsub(',','',HowTo2017$subjectNew))
+  HowTo2017$subjectNew<-as.numeric(HowTo2017$subjectNew)
+  max<-max(subset(HowTo2017, related_queries == 'rising')$subjectNew)
+  HowTo2017rising<-subset(HowTo2017,related_queries=='rising')
+  HowTo2017rising$subjectNew<-subset(HowTo2017rising,related_queries=='rising')$subjectNew*100/max
+  HowTo2017risingTop<-subset(HowTo2017,related_queries=='top')
+  HowTo2017<-rbind(HowTo2017rising ,HowTo2017risingTop)
+  HowTo2017$subjectNew<-as.integer(HowTo2017$subjectNew)
+  HowTo2017Top<-subset(HowTo2017,as.numeric(HowTo2017$subjectNew)>1)
+  HowTo2017Top<-subset(HowTo2017Top, select=c("value", "subjectNew"))
+  HowTo2017Top$subjectNew<-as.numeric(HowTo2017Top$subjectNew)
+  colnames(HowTo2017Top)[2]<-"freq"
+  HowTo2017Top<-HowTo2017Top[order(-HowTo2017Top$freq),]
+  wordcloud2(data = HowTo2017Top)
+
+}
+
+```
+
+
+
+<table border="1" size="100%">
+<tr>
+<th>2012</th>
+<th>2013</th>
+<th>2014</th>
+<th>2015</th>
+<th>2016</th>
+<th>2017</th>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2012_wc.png" ></td>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2013_wc.png" ></td>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2014_wc.png" ></td>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2015_wc.png" ></td>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2016_wc.png" ></td>
+<td><img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/2017_wc.png" ></td>
+</tr>
+</table>
+
+
+#GIF using ezgif.com
+
+![](https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/howToTrends.gif.gif) 
+
+
+
+
+```{r}
+howToData <- read.csv("./How_to_Interesting.csv")
+plot_geo(howToData) %>%
+  add_trace(
+        
+        text = ~Topic, locations = ~Country,text = ~name
+    )
+
+```

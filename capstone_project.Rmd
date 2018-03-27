@@ -297,7 +297,7 @@ kable(howToDataSubSet, "html") %>%
  topic<-howToData$Topic
   data <- data.frame(LAND_ISO, value,topic)
 
-# Run your code:
+
 g <- list(scope = 'world')
 
 plot_geo(data) %>%
@@ -309,7 +309,7 @@ plot_geo(data) %>%
 
 ```
 
-Todo: when we mouse hover it shows some value, which is wrong. I am working on it.
+Todo: when we mouse hover, along with text it shows some value, which is wrong.
 
 
 ### How to handle wife

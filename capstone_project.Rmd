@@ -35,7 +35,6 @@ library(knitr)
 
 ```{r}
 
-#setwd("~/final_project")
 
 #reading 
 bitcoinPrice <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/bitcoin/BitCoin_price_updated.csv")
@@ -94,6 +93,9 @@ layout(autosize = F, width = 1022, height = 500, margin = m,font = list(family =
 title = "Google Bitcoin Serach Trends Vs Bitcoin Price Percentage Change",xaxis = list(title = "Timeline"),yaxis = list(title = "Bitcoin Percentage"))
 
 ```
+
+### Summary
+As we can see Bitcoin search and its price graphs are similar.
 
 <hr style="border: 2px solid #357FAA;"/>
 # How to...search analysis
@@ -167,9 +169,19 @@ Make GIF using ezgif.com
 
 <img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/howToTrends.gif.gif" style="border:1px solid black">
 
+
+
+### Summary
+
+Result shows most searched "How to.." queries on Google. The clouds give greater prominence to words that appear more frequently. <br />
+
+- Good to see "how to vote" as in 2016 as being election year.
+- "How to tie" query is present in all years.
+- In 2012, we used to search like "how to boil eggs" ,"how to make pancackes" and "how to make french braid". In 2017, we still ask these questions but we ask more about losing weight , blocking number and more about iphone, mac and instagram.
+
 <hr style="border: 2px solid #357FAA;"/>
 
-# Unique "How to.." search
+# Unique "How to.." search (editor's choice ;) )
 
 ```{r}
 

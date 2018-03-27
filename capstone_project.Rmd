@@ -30,7 +30,7 @@ library(kableExtra)
 library(knitr)
 ```
 
-### Step 1 : Get bitCoin price history 
+### Step 1: Get bitCoin price history 
 - Go to <a href="https://charts.bitcoin.com/chart/price">https://charts.bitcoin.com/chart/price</a>
 - Click on Tools button
 - Download CSV
@@ -53,7 +53,7 @@ head(newbitcoinPrice,2)
 
 ```
 
-### Step 2 : Get Bitcoin <span style="color: #4885ed;">G</span><span style="color: #db3236">o</span><span style="color: #f4c20d;">o</span><span style="color: #4885ed;">g</span><span style="color: #3cba54;">l</span><span style="color: #db3236;">e</span> trends data
+### Step 2: Get Bitcoin <span style="color: #4885ed;">G</span><span style="color: #db3236">o</span><span style="color: #f4c20d;">o</span><span style="color: #4885ed;">g</span><span style="color: #3cba54;">l</span><span style="color: #db3236;">e</span> trends data
 
 - Go to  <a href="https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin">https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin</a>
 - Download CSV file from there
@@ -73,8 +73,8 @@ head(bitCoinPriceAndTrends,3)
 
 ```
 
-### Step 3 : Plotting 
-Plotting Bit coin search Trends v/s price 
+### Step 3: Plotting 
+Plotting Bitcoin search Trends v/s price 
 
 ```{r warning=FALSE}
 
@@ -90,7 +90,7 @@ m <- list(
 
 plot_ly(x = ~bitCoinPriceAndTrends$newdate) %>%
 add_lines(y = ~bitCoinPriceAndTrends$pricePercent, name = "Actual Price Percentage", line = list(shape = "Actual Price Percentage")) %>%
-add_lines(y = ~bitCoinPriceAndTrends$Bitcoin...United.States., name = "Google Bitcoin Serach Trends", line = list(shape = "Google Bitcoin Serach Trends"))%>%
+add_lines(y = ~bitCoinPriceAndTrends$Bitcoin...United.States., name = "Google Bitcoin Serach Trends", line = list(shape = "Google Bitcoin Search Trends"))%>%
 layout(autosize = F, width = 1022, height = 500, margin = m,font = list(family = "\"Droid Sans\", sans-serif"),
 title = "Google Bitcoin Serach Trends Vs Bitcoin Price Percentage Change",xaxis = list(title = "Timeline"),yaxis = list(title = "Bitcoin Percentage"))
 
@@ -110,7 +110,7 @@ We frequently query "how to ...." on Google, so here is analysis which "how to" 
 
 
 To get "how to query", we use *Gtrends* R package.
-We query "how to .." term for year 2012 to 2017 and showing most searched terms using wordcloud.
+We query "how to .." term for the year 2012 to 2017 and showing most searched terms using wordcloud.
 
 
 ```{r}
@@ -184,6 +184,7 @@ Make GIF using ezgif.com
 
 <img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/howToTrends.gif.gif" style="border:1px solid black">
 
+Result shows most searched "How to.." queries on Google. The clouds give greater prominence to words that appear more frequently.
 
 ```{r}
 tr2012<-getYearTrends("2012-01-01 2012-12-31")
@@ -211,7 +212,7 @@ df[order(-df$Freq),]
 ```
 
 
-#### How to queries asked only in year 2012
+#### How to queries asked only in the year 2012
 
 ```{r}
 allExcept2012<-rbind(tr2013,tr2014,tr2015,tr2016,tr2017)
@@ -223,7 +224,7 @@ kable(only2012df, "html") %>%
 ```
 
 
-#### How to queries asked only in year 2016
+#### How to queries asked only in the year 2016
 
 ```{r}
 allExcept2016<-rbind(tr2012,tr2013,tr2014,tr2015,tr2017)
@@ -234,7 +235,7 @@ kable(only2016df, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-#### How to queries asked only in year 2017
+#### How to queries asked only in the year 2017
 
 ```{r}
 allExcept2017<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016)
@@ -249,7 +250,6 @@ kable(only2017df, "html") %>%
 
 ### Summary
 
-Result shows most searched "How to.." queries on Google. The clouds give greater prominence to words that appear more frequently. <br />
 
 - Good to see "how to vote" & "how to register to vote" in year 2016, as that year being an election year.
 - "how to tie a tie","how to boil eggs","how to draw" queries we keep asking all these years.
@@ -257,9 +257,9 @@ Result shows most searched "How to.." queries on Google. The clouds give greater
 
 <hr style="border: 2px solid #357FAA;"/>
 
-# Unique "How to.." search(World):editor's choice ;)
+# Unique How to..search(World): Editor's choice.
 
-Here is interesting queries in last 12 months.
+Here are interesting queries in last 12 months.
 
 ```{r}
 
@@ -289,12 +289,12 @@ plot_geo(data) %>%
 
 ```
 
-Todo : when we mouse hover it shows some value, which is wrong. I am working on it.
+Todo: when we mouse hover it shows some value, which is wrong. I am working on it.
 
 
 ### How to handle wife
 
-Out of above unique "How to" queries, I found "How to handle wife" quite funny and seriouls at the same time.
+Out of above unique "How to" queries, I found "How to handle wife" quite funny and serious at the same time.
 It points out gender inequality and wherever we see such query, I expect that location to have high gender inequality. So here we are finding top five such countries.
 
 ```{r warning=FALSE}
@@ -312,6 +312,6 @@ kable(howToHandleWifeSearchHead, "html") %>%
 ### Northern Lights
 
 It is a natural light display in the Earth's sky, predominantly seen in the high-latitude regions like Iceland. That is the reason people from Iceland search "how to take pictures of northern lights".
-This was most amazing thing to know while working on this project.
+This was the most amazing thing to know while working on this project.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Aurora_Borealis_and_Australis_Poster.jpg/600px-Aurora_Borealis_and_Australis_Poster.jpg" height="25%" /><br/><small>Source : Wikipedia</small>

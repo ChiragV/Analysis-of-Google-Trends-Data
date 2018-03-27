@@ -262,9 +262,9 @@ Result shows most searched "How to.." queries on Google. The clouds give greater
 howToData <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/How_to_Interesting.csv")
 howToDataSubSet<-subset(howToData, select = c(1, 4))
 colnames(howToDataSubSet)[2] <- "Country"
-howToDataSubSet %>%
-  kable("html") %>%
-  kable_styling()
+
+kable(howToDataSubSet, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
 
 #Create dataframe with toy data:
   LAND_ISO <- howToData$Country
@@ -298,8 +298,15 @@ howToHandleWifeSearch<-gtrends("how to handle wife", time = "today 12-m")
 howToHandleWifeSearchHead<-head(howToHandleWifeSearch$interest_by_country,5)
 howToHandleWifeSearchHead<-subset(howToHandleWifeSearchHead, select = c(1, 2))
 colnames(howToHandleWifeSearchHead)[2] <- "Percentage of Hits"
-howToHandleWifeSearchHead %>%
-  kable("html") %>%
-  kable_styling()
+
+
+kable(howToHandleWifeSearchHead, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
 
 ```
+### Northern Lights
+
+It is a natural light display in the Earth's sky, predominantly seen in the high-latitude regions like Iceland. That is the reason people from Iceland search "how to take pictures of northern lights".
+This was most amazing thing to know while working on this project.
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Aurora_Borealis_and_Australis_Poster.jpg/600px-Aurora_Borealis_and_Australis_Poster.jpg" height="25%" /><br/><small>Source : Wikipedia</small>

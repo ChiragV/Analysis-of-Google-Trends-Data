@@ -163,7 +163,7 @@ myfunction <- function(timeline)
 </table>
 
 
-##Make GIF image
+### Make GIF image
 
 Make GIF using ezgif.com
 
@@ -205,7 +205,13 @@ plot_geo(data) %>%
   layout(geo = g)%>% hide_colorbar()
 ```
 
-## How to handle wife
+To do : when we mouse hover it shows some value, which is wrong. I am working on it.
+
+
+### How to handle wife
+
+Out of above unique "How to" queries, I found "How to handle wife" quite funny and seriouls at the same time.
+It points out gender inequality and wherever we see such query, I expect that location to have high gender inequality. So here we are finding top five such countries.
 
 ```{r warning=FALSE}
 howToHandleWifeSearch<-gtrends("how to handle wife", time = "today 12-m")

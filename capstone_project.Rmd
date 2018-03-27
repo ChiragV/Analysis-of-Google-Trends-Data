@@ -9,7 +9,9 @@ output:
 ---
 
 <hr style="border: 2px solid #357FAA;"/>
-Data analysis using Google Trends
+Data analysis using Google Trends <br />
+<b>
+<span style="color: #4885ed;">G</span><span style="color: #db3236">o</span><span style="color: #f4c20d;">o</span><span style="color: #4885ed;">g</span><span style="color: #3cba54;">l</span><span style="color: #db3236;">e</span></b> searches are one of the most important datasets ever collected. This is not only the tool to search or get answers but also great mean to understand people around the world. It is digital gold mine which can unravel much unknown information.
 
 <hr style="border: 2px solid #357FAA;"/>
 
@@ -51,7 +53,7 @@ head(newbitcoinPrice,2)
 
 ```
 
-### Step 2 : Get Bitcoin google trends data
+### Step 2 : Get Bitcoin <span style="color: #4885ed;">G</span><span style="color: #db3236">o</span><span style="color: #f4c20d;">o</span><span style="color: #4885ed;">g</span><span style="color: #3cba54;">l</span><span style="color: #db3236;">e</span> trends data
 
 - Go to  <a href="https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin">https://trends.google.com/trends/explore?date=all&geo=US&q=bitcoin</a>
 - Download CSV file from there
@@ -114,11 +116,20 @@ We query "how to .." term for year 2012 to 2017 and showing most searched terms 
 
 # Writing function to display wordcloud
 
-myfunction <- function(timeline)
+getYearTrends <- function(timeline)
 {
 
   HowTo2017<-gtrends("How to", geo="US", time = timeline)
   HowTo2017<-HowTo2017$related_queries
+  return (HowTo2017)
+
+}
+
+gTrendswordcloud <- function(timeline)
+{
+
+  #HowTo2017<-gtrends("How to", geo="US", time = timeline)
+  HowTo2017<-getYearTrends(timeline)
   HowTo2017$subjectNew<-gsub('%','',HowTo2017$subject)
   HowTo2017[which(HowTo2017[,7]=='<1', arr.ind=TRUE), 7] <-0
   HowTo2017[which(HowTo2017[,7]=='Breakout', arr.ind=TRUE), 7] <-9999
@@ -138,6 +149,8 @@ myfunction <- function(timeline)
   wordcloud2(data = HowTo2017Top)
 
 }
+
+#gTrendswordcloud("2017-01-01 2017-12-31")
 
 ```
 
@@ -170,14 +183,75 @@ Make GIF using ezgif.com
 <img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/howToTrends.gif.gif" style="border:1px solid black">
 
 
+```{r}
+tr2012<-getYearTrends("2012-01-01 2012-12-31")
+tr2013<-getYearTrends("2013-01-01 2013-12-31")
+tr2014<-getYearTrends("2014-01-01 2014-12-31")
+tr2015<-getYearTrends("2015-01-01 2015-12-31")
+tr2016<-getYearTrends("2016-01-01 2016-12-31")
+tr2017<-getYearTrends("2017-01-01 2017-12-31")
+
+all<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016,tr2017)
+
+#plot_ly(x = df$Var1,y = df$Freq,name = "SF Zoo",type = "bar")
+
+```
+
+
+
+#### How to queries asked since more than four years
+
+```{r}
+
+df<-as.data.frame(table(all$value))
+df<-subset(df, df$Freq > 4)
+df[order(-df$Freq),] 
+```
+
+
+#### How to queries asked only in year 2012
+
+```{r}
+allExcept2012<-rbind(tr2013,tr2014,tr2015,tr2016,tr2017)
+only2012<-setDT(tr2012)[!allExcept2012, on="value"]
+only2012df<-as.data.frame(only2012$value)
+colnames(only2012df)="Year 2012 Unique queries"
+kable(only2012df, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+
+#### How to queries asked only in year 2016
+
+```{r}
+allExcept2016<-rbind(tr2012,tr2013,tr2014,tr2015,tr2017)
+only2016<-setDT(tr2016)[!allExcept2016, on="value"]
+only2016df<-as.data.frame(only2016$value)
+colnames(only2016df)="Year 2016 Unique queries"
+kable(only2016df, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+#### How to queries asked only in year 2017
+
+```{r}
+allExcept2017<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016)
+only2017<-setDT(tr2017)[!allExcept2017, on="value"]
+
+only2017df<-as.data.frame(only2017$value)
+colnames(only2017df)="Year 2017 Unique queries"
+
+kable(only2017df, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
 
 ### Summary
 
 Result shows most searched "How to.." queries on Google. The clouds give greater prominence to words that appear more frequently. <br />
 
-- Good to see "how to vote" as in 2016 as being election year.
-- "How to tie" query is present in all years.
-- In 2012, we used to search like "how to boil eggs" ,"how to make pancackes" and "how to make french braid". In 2017, we still ask these questions but we ask more about losing weight , blocking number and more about iphone, mac and instagram.
+- Good to see "how to vote" & "how to register to vote" in year 2016. as that year being an election year.
+- "how to tie a tie","how to boil eggs","how to draw" queries we keep asking all these years.
+- In 2012, we used to search like "how to fall asleep" ,"how to meditate" and "how to make mashed potatoes". We no longer ask such simple questions. For e.g. in 2017 we ask "how to make alfredo sauce" & "how to make money online". It shows how as society we changed.
 
 <hr style="border: 2px solid #357FAA;"/>
 
@@ -186,6 +260,11 @@ Result shows most searched "How to.." queries on Google. The clouds give greater
 ```{r}
 
 howToData <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/How_to_Interesting.csv")
+howToDataSubSet<-subset(howToData, select = c(1, 4))
+colnames(howToDataSubSet)[2] <- "Country"
+howToDataSubSet %>%
+  kable("html") %>%
+  kable_styling()
 
 #Create dataframe with toy data:
   LAND_ISO <- howToData$Country
@@ -205,7 +284,7 @@ plot_geo(data) %>%
   layout(geo = g)%>% hide_colorbar()
 ```
 
-To do : when we mouse hover it shows some value, which is wrong. I am working on it.
+Todo : when we mouse hover it shows some value, which is wrong. I am working on it.
 
 
 ### How to handle wife

@@ -215,45 +215,65 @@ df[order(-df$Freq),]
 #### How to queries asked only in the year 2012
 
 ```{r}
+get2012uniqueQueries <- function(){
 allExcept2012<-rbind(tr2013,tr2014,tr2015,tr2016,tr2017)
 only2012<-setDT(tr2012)[!allExcept2012, on="value"]
 only2012df<-as.data.frame(only2012$value)
 colnames(only2012df)="Year 2012 Unique queries"
+only2012df<-unique(only2012df)
 kable(only2012df, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
+}
 ```
+
 
 
 #### How to queries asked only in the year 2016
 
 ```{r}
+get2016uniqueQueries <- function(){
 allExcept2016<-rbind(tr2012,tr2013,tr2014,tr2015,tr2017)
 only2016<-setDT(tr2016)[!allExcept2016, on="value"]
 only2016df<-as.data.frame(only2016$value)
 colnames(only2016df)="Year 2016 Unique queries"
+only2016df<-unique(only2016df)
 kable(only2016df, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
+}
 ```
 
 #### How to queries asked only in the year 2017
 
 ```{r}
+get2017uniqueQueries <- function(){
 allExcept2017<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016)
 only2017<-setDT(tr2017)[!allExcept2017, on="value"]
 
 only2017df<-as.data.frame(only2017$value)
 colnames(only2017df)="Year 2017 Unique queries"
-
+only2017df<-unique(only2017df)
 kable(only2017df, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
+}
+
 ```
+
+<table border="1">
+<tr>
+<td style="vertical-align:top">`r get2012uniqueQueries()`</td>
+<td style="vertical-align:top">`r get2016uniqueQueries()`</td>
+<td style="vertical-align:top">`r get2017uniqueQueries()`</td>
+</tr>
+</table>
 
 ### Summary
 
 
 - Good to see "how to vote" & "how to register to vote" in year 2016, as that year being an election year.
 - "how to tie a tie","how to boil eggs","how to draw" queries we keep asking all these years.
-- In 2012, we used to search like "how to fall asleep" ,"how to meditate" and "how to make mashed potatoes". We no longer ask such simple questions. For e.g. in 2017 we ask "how to make alfredo sauce" & "how to make money online". It shows how as society we changed.
+- People are more searching for snapchat than facebook. 
+- We have moved from iphone 4 to iphone 7 (obviously).
+
 
 <hr style="border: 2px solid #357FAA;"/>
 

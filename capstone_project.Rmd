@@ -28,10 +28,11 @@ library(gtrendsR)
 library(wordcloud2)
 library(kableExtra)
 library(knitr)
+
 ```
 
 ### Step 1: Get bitCoin price history 
-- Go to <a href="https://charts.bitcoin.com/chart/price">https://charts.bitcoin.com/chart/price</a>
+- Go to <a href="https://charts.bitcoin.com/chart/price" target="_blank">https://charts.bitcoin.com/chart/price</a>
 - Click on Tools button
 - Download CSV
 
@@ -260,6 +261,7 @@ kable(only2017df, "html") %>%
 
 <table border="1">
 <tr>
+
 <td style="vertical-align:top">`r get2012uniqueQueries()`</td>
 <td style="vertical-align:top">`r get2016uniqueQueries()`</td>
 <td style="vertical-align:top">`r get2017uniqueQueries()`</td>
@@ -271,8 +273,6 @@ kable(only2017df, "html") %>%
 
 - Good to see "how to vote" & "how to register to vote" in year 2016, as that year being an election year.
 - "how to tie a tie","how to boil eggs","how to draw" queries we keep asking all these years.
-- People are more searching for snapchat than facebook. 
-- We have moved from iphone 4 to iphone 7 (obviously).
 
 
 <hr style="border: 2px solid #357FAA;"/>
@@ -335,3 +335,123 @@ It is a natural light display in the Earth's sky, predominantly seen in the high
 This was the most amazing thing to know while working on this project.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Aurora_Borealis_and_Australis_Poster.jpg/600px-Aurora_Borealis_and_Australis_Poster.jpg" height="25%" /><br/><small>Source : Wikipedia</small>
+
+##
+
+http://www.pbs.org/parents/experts/archive/2012/09/boy-and-girl-brains-whats-the.html
+```{r}
+giftedQuery<- function(query1,query2,timespan)
+{
+  query11<-gtrends(query1, geo="US", time=timespan)
+  query11Avg<-mean(query11$interest_over_time$hits)
+  
+  query22<-gtrends(query2, geo="US", time=timespan)
+  query22Avg<-mean(query22$interest_over_time$hits)
+  
+  
+p <- plot_ly(
+  x = c(query1,query2),
+  y = c(query11Avg, query22Avg),
+  name = "SF Zoo",
+  type = "bar"
+)%>%
+  layout(title = 'Gender bias clearly visible',xaxis = list(title = paste(query1,query2,sep = " <b>v/s</b> ")),yaxis = list(title = 'Average of search'))
+p
+}
+
+giftedQuery('is my daughter gifted','is my son gifted','today 12-m')
+##2017-01-01 2017-12-31
+giftedQuery('is my daughter overweight','is my son overweight','2017-01-01 2017-12-31') 
+```
+
+#Can pregnant women eat
+
+```{r}
+pregnantWomenEat<- function(query1,geo1)
+{
+  query11<-gtrends(query1, geo=geo1, time='2017-01-01 2017-12-31')
+  all<-subset(query11$related_queries,query11$related_queries$related_queries=='top')$value
+  #all1<-replace(all,"can pregnant women eat ","")
+  
+  num<-grep('^can pregnant women eat',all)
+  all1<-all[num]
+  all1<-gsub("can pregnant women eat ", "", all1)
+  all1<-head(all1,5)
+  df1<-data.frame(all1)
+  names(df1)<-geo1
+  
+kable(df1, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+
+}
+
+
+```
+
+<table border="1">
+<tr>
+
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "US")`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "GB")`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "AU")`</td>
+</tr>
+</table>
+
+
+#How to during pregnancy
+
+```{r}
+howTopregnantWomen<- function(query1,geo1)
+{
+ query11<-gtrends(query1, geo=geo1, time='2017-01-01 2017-12-31')
+  all<-subset(query11$related_queries,query11$related_queries$related_queries=='top')$value
+  
+  num<-grep('during pregnancy',all)
+  all1<-all[num]
+  num<-grep('^how to',all1)
+  all2<-all1[num]
+  all3<-gsub("how to ", "", all2)
+
+  all4<-gsub("during pregnancy","",all3)
+  all5<-head(all4,5)
+  df1<-data.frame(all5)
+  names(df1)<-geo1
+  
+kable(df1, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+
+}
+
+
+```
+
+<table border="1">
+<tr>
+
+<td style="vertical-align:top">`r howTopregnantWomen("How to during pregnancy", "US")`</td>
+
+</tr>
+</table>
+
+#How to pronounce
+```{r}
+setwd("C:/github/GitHub/Capstone/Capstone/data")
+states2 <- read.csv('US_States.csv', stringsAsFactors = FALSE)
+
+for (i in 1:nrow(states2)) 
+{
+  
+  
+  result<-gtrends("how to pronounce", geo=states2$States1[i], time='2017-01-01 2017-12-31')
+  
+  if(!is.null(result$related_queries))
+  {
+    
+    top<-subset(result$related_queries,result$related_queries$related_queries=='top')$value
+    rising<-subset(result$related_queries,result$related_queries$related_queries=='rising')$value
+    print(paste(states2$States1[i],top[1],rising[1],sep = ","))
+  }
+}
+
+```
+

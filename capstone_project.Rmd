@@ -1,5 +1,5 @@
 ---
-title: "Mid-Term Draft Project"
+title: "Analytics Master's Research Project"
 author: "Chirag Vithalani"
 date: "March 18, 2018"
 output:
@@ -28,7 +28,11 @@ library(gtrendsR)
 library(wordcloud2)
 library(kableExtra)
 library(knitr)
-
+library(prophet)
+library(gtrendsR)
+library(ggplot2)
+library(plotly)
+library(data.table)
 ```
 
 ### Step 1: Get bitCoin price history 
@@ -77,6 +81,10 @@ head(bitCoinPriceAndTrends,3)
 ### Step 3: Plotting 
 Plotting Bitcoin search Trends v/s price 
 
+Below is Bitcoin price and Bitcoin search trends comparison using line chart. It seems there is a correlation between how much people search about Bitcoin and the price of Bitcoin. Also, it shows around December-January the price and searches for Bitcoin was highest.
+It doesn't mean more people search for Bitcoin; more its value will be. But reverse might be true.
+
+
 ```{r warning=FALSE}
 
 
@@ -98,7 +106,83 @@ title = "Google Bitcoin Serach Trends Vs Bitcoin Price Percentage Change",xaxis 
 ```
 
 ### Summary
-As we can see Bitcoin search and its price graphs are similar.
+As we can see search for Bitcoin and price both picked around last week of December 2017 and starting of January 2018. Although It's not a perfect indicator Google Trends sometimes lags and sometimes leads bitcoin' price. 
+
+We can say there's a strong correlation between bitcoin's price and the performance of the search term "Bitcoin" on Google. Maybe price follows interest, and therefore, more buyers and greater search volume. If that is the case Trends chart shows a reversal to the uptrend for interest in Bitcoin.
+
+
+<hr style="border: 2px solid #357FAA;"/>
+
+#Movie search trends v/s Lifetime Gross
+Next I choose to analyze academy awards nominated movies. I wanted to compare is there some pattern in how people search about movies and the business that movie does. So I chose below four movies to do analysis.I got search Google search data from trends tool and the data of business that movie did from BoxOfficeMojo.com
+
+```{r echo=FALSE,warning=FALSE}
+
+
+m <- list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 100,
+  pad = 4
+)
+
+movieTrends <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/Movies_Trends.csv",stringsAsFactors=FALSE)
+
+#Formatting date
+movieTrends$newdate<-as.Date(movieTrends$Day, "%Y-%m-%d")
+
+index<-movieTrends$The.Shape.of.Water...United.States.=='<1'
+movieTrends$The.Shape.of.Water...United.States.[index]<-0
+movieTrends$The.Shape.of.Water...United.States.<-as.integer(movieTrends$The.Shape.of.Water...United.States.)
+
+index<-movieTrends$Darkest.Hour...United.States.=='<1'
+movieTrends$Darkest.Hour...United.States.[index]<-0
+movieTrends$Darkest.Hour...United.States.<-as.integer(movieTrends$Darkest.Hour...United.States.)
+
+index<-movieTrends$Lady.Bird...United.States.=='<1'
+movieTrends$Lady.Bird...United.States.[index]<-0
+movieTrends$Lady.Bird...United.States.<-as.integer(movieTrends$Lady.Bird...United.States.)
+
+index<-movieTrends$Three.Billboards.Outside.Ebbing..Missouri...United.States.=='<1'
+movieTrends$Three.Billboards.Outside.Ebbing..Missouri...United.States.[index]<-0
+movieTrends$Three.Billboards.Outside.Ebbing..Missouri...United.States.<-as.integer(movieTrends$Three.Billboards.Outside.Ebbing..Missouri...United.States.)
+
+plot_ly(x = ~movieTrends$newdate) %>%
+add_lines(y = ~movieTrends$The.Shape.of.Water...United.States., name = "The Shape of Water", line = list(shape = "Google Bitcoin Search Trends")) %>%
+  
+add_lines(y = ~movieTrends$Darkest.Hour...United.States., name = "Darkest Hour", line = list(shape = "Google Bitcoin Search Trends"))%>%
+
+add_lines(y = ~movieTrends$Lady.Bird...United.States., name = "Lady Bird", line = list(shape = "Google Bitcoin Search Trends"))%>%
+
+add_lines(y = ~movieTrends$Three.Billboards.Outside.Ebbing..Missouri...United.States., name = "Three Billboards Outside Ebbing Missouri", line = list(shape = "Google Bitcoin Search Trends"))%>%
+  
+layout(autosize = F, width = 1022, height = 500, margin = m,font = list(family = "\"Droid Sans\", sans-serif"),
+       
+title = "Academy award nominated movies search trends ",xaxis = list(title = "Timeline"),yaxis = list(title = "Search Trends"))
+
+
+
+
+movieGross <- read.csv("https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/Movies_Gross.csv",stringsAsFactors=FALSE)
+
+
+ width <-c(0.3, 0.3, 0.3, 0.3)
+plot_ly(
+ 
+
+  type = "bar"
+)%>%
+add_bars( x = movieGross$Movie[1], y = movieGross$Gross[1],color = I("#4285F4"),name = 'The Shape of Water',width = ~width)%>% 
+  add_bars( x = movieGross$Movie[2], y = movieGross$Gross[2],color = I("#F4B400"),name = 'Darkest Hour',width = ~width)%>% 
+  add_bars( x = movieGross$Movie[3], y = movieGross$Gross[3],color = I("red"),name = 'Three Billboards Outside Ebbing, Missouri',width = ~width)%>% 
+  add_bars( x = movieGross$Movie[4], y = movieGross$Gross[4],color = I("#0F9D58"),name = 'Lady Bird',width = ~width)%>% 
+  layout(autosize = F, width = 800, height =200,title = 'Gross Business',font = list(family = "\"Droid Sans\", sans-serif"))
+
+
+```
+
+As we can see "Shape of water"  is highest searched movie among all four and that is also movie which had highest gross business.Second highest searched movie is "Three Billboards Outside Ebbing, Missouri" whereas second most earner was movie "Darkest Hour". Least searched movie among four is "Lady Bird" and that is the one which did least business. so looks like Google search does reasonably good job with choosing first and last winner.
 
 <hr style="border: 2px solid #357FAA;"/>
 
@@ -114,9 +198,9 @@ To get "how to query", we use *Gtrends* R package.
 We query "how to .." term for the year 2012 to 2017 and showing most searched terms using wordcloud.
 
 
-```{r}
+```{r }
 
-
+library(data.table)
 # Writing function to display wordcloud
 
 getYearTrends <- function(timeline)
@@ -187,7 +271,8 @@ Make GIF using ezgif.com
 
 Result shows most searched "How to.." queries on Google. The clouds give greater prominence to words that appear more frequently.
 
-```{r}
+```{r }
+library(data.table)
 tr2012<-getYearTrends("2012-01-01 2012-12-31")
 tr2013<-getYearTrends("2013-01-01 2013-12-31")
 tr2014<-getYearTrends("2014-01-01 2014-12-31")
@@ -205,17 +290,20 @@ all<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016,tr2017)
 
 #### How to queries asked since more than four years
 
-```{r}
+```{r }
 
 df<-as.data.frame(table(all$value))
 df<-subset(df, df$Freq > 4)
 df[order(-df$Freq),] 
+
+kable(df, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 
 #### How to queries asked only in the year 2012
 
-```{r}
+```{r }
 get2012uniqueQueries <- function(){
 allExcept2012<-rbind(tr2013,tr2014,tr2015,tr2016,tr2017)
 only2012<-setDT(tr2012)[!allExcept2012, on="value"]
@@ -231,7 +319,7 @@ kable(only2012df, "html") %>%
 
 #### How to queries asked only in the year 2016
 
-```{r}
+```{r }
 get2016uniqueQueries <- function(){
 allExcept2016<-rbind(tr2012,tr2013,tr2014,tr2015,tr2017)
 only2016<-setDT(tr2016)[!allExcept2016, on="value"]
@@ -245,7 +333,7 @@ kable(only2016df, "html") %>%
 
 #### How to queries asked only in the year 2017
 
-```{r}
+```{r }
 get2017uniqueQueries <- function(){
 allExcept2017<-rbind(tr2012,tr2013,tr2014,tr2015,tr2016)
 only2017<-setDT(tr2017)[!allExcept2017, on="value"]
@@ -309,7 +397,7 @@ plot_geo(data) %>%
 
 ```
 
-Todo: when we mouse hover, along with text it shows some value, which is wrong.
+
 
 
 ### How to handle wife
@@ -336,10 +424,107 @@ This was the most amazing thing to know while working on this project.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Aurora_Borealis_and_Australis_Poster.jpg/600px-Aurora_Borealis_and_Australis_Poster.jpg" height="25%" /><br/><small>Source : Wikipedia</small>
 
-##
+<hr style="border: 2px solid #357FAA;"/>
 
-http://www.pbs.org/parents/experts/archive/2012/09/boy-and-girl-brains-whats-the.html
+#How to spell & pronounce
+
+
+Google Trends is a unique and useful tool we can use  to keep track of what people want to know about. When people do Google search; they misspell words and collectively Google can tell which words are misspelled more frequently.  Similarly people also use google when they want to know the spelling of some complex word with query "how to spell..".
+
+## Misspelled words
+
+There is article with title <a href="https://www.ctvnews.ca/canada/google-reveals-top-how-to-spell-searches-by-canadian-province-1.3447494" target="_blank">"Google reveals top 'how to spell' searches by Canadian province"</a> which gave interesting analysis of which words are misspelled by Canadians. Similar data analysis for United States given by Google trends twitter handle.
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">ICYMI - here&#39;s our map of the most misspelled words in America <a href="https://twitter.com/hashtag/spellingbee?src=hash&amp;ref_src=twsrc%5Etfw">#spellingbee</a><br><br>(corrected legend) <a href="https://t.co/2w56NpDgGK">pic.twitter.com/2w56NpDgGK</a></p>&mdash; GoogleTrends (@GoogleTrends) <a href="https://twitter.com/GoogleTrends/status/869618902942101504?ref_src=twsrc%5Etfw">May 30, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+## Story behind "how to spell sound of sniff"
+If we query <a href="https://trends.google.com/trends/explore?geo=US&q=how%20to%20spell" target="_blank">"how to spell" right now</a> then top Google trends result in United States is "how to spell the sound of a sniff" which is strange result but there is story behind it. Macaroni Tony with Twitter handle @BigBeard_Ali, who is followed by 14K users tweeted below on 11 Feb 2018 .
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">I got $750 to anybody that can spell the sound of a sniff????????????</p>&mdash; Macaroni Tony (@BigBeard_Ali) <a href="https://twitter.com/BigBeard_Ali/status/962747232217980932?ref_src=twsrc%5Etfw">February 11, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+This tweet had around 6K re-tweets and 10K likes and this led people to search for "how to spell sound of sniff". I was able to see that <a href="https://trends.google.com/trends/explore?geo=US&q=how%20to%20spell%20the%20sound%20of%20a%20sniff" target="_blank">this query picked only after this tweet.</a> It is amazing that only one tweet with small amount of prize money can have such ripple effect.
+
+## How to pronounce searches in United States
+Inspired with above analysis, I decided to do how to pronounce analysis. It would be fun to understand which are the words people find difficult to pronounce.
+
+```{r echo=FALSE}
+library(kableExtra)
+setwd("C:/github/GitHub/Capstone/Capstone/data")
+states2 <- read.csv('https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/How_to_pronounce.csv', stringsAsFactors = FALSE)
+
+kable(states2, "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+
+In last twelve months, most difficult words people find difficult to pronounce are people's names.
+
+- First is singer-songwriter named "Sza"                
+- Followed by Wonder Woman fame "Gal Gadot"   
+- Followed by American rapper "XXXTentacion
+
+Below is state wise breakdown showing each state find which word difficult to pronounce.
+
+<img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/How%20to%20pronounce%20_Google%20Trends_%20in%202017.png" height="25%" />
+
+This also contains food related items like 'pho', 'gyro' and acaí. Map is created through mapchart.net. At world stage top query is "how to pronounce pyeongchang" which hosted the 2018 Winter Olympics and the 2018 Winter Paralympics.
+
+
+```{r echo=FALSE,eval=FALSE}
+
+states2 <- read.csv('https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/data/US_States.csv', stringsAsFactors = FALSE)
+for (i in 1:nrow(states2)) 
+{
+  
+  #result<-gtrends("how to pronounce", geo=states2$States1[i], time='2017-01-01 2017-12-31')
+  result<-gtrends("how to spell", geo=states2$States1[i], time='2017-01-01 2017-12-31')
+  
+  if(!is.null(result$related_queries))
+  {
+    
+    top<-subset(result$related_queries,result$related_queries$related_queries=='top')$value
+    rising<-subset(result$related_queries,result$related_queries$related_queries=='rising')$value
+    print(paste(states2$States1[i],top[1],rising[1],sep = ","))
+  }
+}
+
+```
+<hr style="border: 2px solid #357FAA;"/>
+
+#Quit smoking
+
+Each new year we all make resolutions and we keep making them each year.  We all search lose weight and quit smoking each year. These search queries peak around January each year.
+
 ```{r}
+
+
+trends_us = gtrends(c("quit smoking"), geo = c("US"), gprop = "web", time = "2015-01-01 2018-04-30")[[1]]
+
+forcase <- trends_us[,c("date","hits")]
+colnames(forcase) <-c("ds","y")
+m <- prophet(forcase)
+future <- make_future_dataframe(m, periods = 365)
+forecast <- predict(m, future)
+plot(m, forecast)
+prophet_plot_components(m, forecast)
+```
+
+Image of above shows the forecasting (using Facebook's time series forecasting prophet package) of "quit smoking" query which shows this trend continuing in January 2019.Image after that shows same data in different spans. As we can overall trend is over the years is going down. Somehow we search about "quit smoking" more on weekdays.
+
+
+<hr style="border: 2px solid #357FAA;"/>
+
+#Sons vs. Daughters : Gender Bias
+
+In 21st century we would like to think that we treat boys and girls same. At least in United States - which is arguably one most the most liberal country in the world. we would like to think that american parents have similar standards and similar dreams for their sons and daughters and there will not be any gender bias. But study from Seth Stephens-Davidowitz suggests that is not the case.
+Google searches suggest parents have different concerns for male and female children. As he points out and same shown below with Google trends data that our parents expect ( may be unknowingly ) boys to be smarter and girls to be thinner. They are more excited by the intellectual potential of their sons and they are more concerned about the weight and appearance of their daughters.
+
+
+```{r eval=FALSE}
 giftedQuery<- function(query1,query2,timespan)
 {
   query11<-gtrends(query1, geo="US", time=timespan)
@@ -364,19 +549,44 @@ giftedQuery('is my daughter gifted','is my son gifted','today 12-m')
 giftedQuery('is my daughter overweight','is my son overweight','2017-01-01 2017-12-31') 
 ```
 
-#Can pregnant women eat
+##Giftedness
+
+Mostly all parens like to believe that their kid has special talent. But as below graph shows people in US queried more "is my son gifted" than "is my daughter gifted". This search difference is almost 50%
+
+<img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/gifted_search.png" height="25%" />
+
+Unfortunately, this is despite the fact that that in real life this is exactly opposite. As David Walsh, an American psychologist, who specializes in parenting, points out as below
+"Girls talk earlier than boys, have larger pre-school vocabularies, and use more complex sentence structures. Once in school, girls are one to one-and-a-half years ahead of boys in reading and writing. Boys are twice as likely to have a language or reading problem and three to four times more likely to stutter. Girls do better on tests of verbal memory, spelling and verbal fluency. On average, girls utter two to three times more words per day than boys and even speak faster---twice as many words per minute."
+
+## Overweight
+Childhood obesity has undoubtedly become one of the most complex public health problems facing future generations. Parents search "Is my daughter overweight?" almost twice as frequently as they search "Is my son overweight?". Clearly parents worry more about overweight girls than overweight boys.
+This is despite the fact that trends shows  - in reality boys are more overweight than girls.
+
+
+<img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/overweight.png" height="25%" />
+<hr style="border: 2px solid #357FAA;"/>
+
+
+#What pregnant Women Want
+
+Unlike "what women want" which no one can claim to know about,we think we would have good idea "What pregnant Women Want".  It would be the cravings for pickles and chocolate, the avoidance of wine, the nausea and stretch marks, and good supporting husband.
+It looks like Google trends can put more light on this question and surely we can expect different answers from different parts of the world.
+We can start with questions about "what pregnant women can do" safely. The top questions women ask in  United States are: Can pregnant women "eat shrimp,tuna,fish or crab", "drink wine,coffee or tea" or "take Tylenol"? There are (comparatively) less  frequently asked questions too like "fly", "take bath" or "paint".
+
+## Can pregnant women eat ____?
 
 ```{r}
-pregnantWomenEat<- function(query1,geo1)
+pregnantWomenEat<- function(query1,geo1,time1)
 {
-  query11<-gtrends(query1, geo=geo1, time='2017-01-01 2017-12-31')
+  query11<-gtrends(query1, geo=geo1, time=time1)
   all<-subset(query11$related_queries,query11$related_queries$related_queries=='top')$value
   #all1<-replace(all,"can pregnant women eat ","")
   
   num<-grep('^can pregnant women eat',all)
   all1<-all[num]
-  all1<-gsub("can pregnant women eat ", "", all1)
-  all1<-head(all1,5)
+  all1<-gsub("can pregnant women eat", "", all1)
+  all1
+  all1<-head(all1,3)
   df1<-data.frame(all1)
   names(df1)<-geo1
   
@@ -385,20 +595,33 @@ kable(df1, "html") %>%
 
 }
 
-
 ```
 
 <table border="1">
 <tr>
 
-<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "US")`</td>
-<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "GB")`</td>
-<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "AU")`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "US",'2017-01-01 2017-12-31')`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "GB",'2017-01-01 2017-12-31')`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "AU",'today 12-m')`</td>
+<td style="vertical-align:top">`r pregnantWomenEat("Can pregnant women eat", "IN",'2016-01-01 2017-12-31')`</td>
 </tr>
 </table>
 
 
-#How to during pregnancy
+<img src="https://raw.githubusercontent.com/chirag-vithlani/Capstone/master/images/Pregnant.PNG" height="25%" />
+
+But if we inquire same question in other countries, they don't look much like the United States or one another. Whether pregnant women can "drink wine" is not among the top 10 questions in Canada, Australia or United Kingdom. Australia's unique concern is mostly related to eating cream cheese.
+The differences in questions have less to do with what is safe to do and more to do with information coming from different sources in each country including old stories,local custom and neighborhood trivial talk. 
+We can see another clear difference when we look at the top searches for "how to ___ during pregnancy?" In the United States, the top search is (gain or lose) weight related queries whereas in India women are more concerned about how to sleep or weight of baby. In India it is illegal to find gender of baby before birth and that is why one of the top query is to know any trick about knowing gender.
+While the cultural manifestations of pregnancy may be different, the physical experience tends to be similar everywhere. I tested how often various symptoms were searched in combination with the word "pregnant." For example, how often is "pregnant" searched in conjunction with "nausea," "back pain" or "constipation"?
+Canada's symptoms were very close to those in the United States. Symptoms in countries like Britain, Australia and India were all roughly similar, too. Preliminary evidence suggests that no part of the world has stumbled upon a diet or environment that drastically reduces a pregnancy symptom.
+We can extend this analysis and check what expectant fathers are searching for. In the United States, the top searches include "be nice to me my wife is pregnant shirt"
+
+
+
+
+
+##How to____during pregnancy
 
 ```{r}
 howTopregnantWomen<- function(query1,geo1)
@@ -413,7 +636,7 @@ howTopregnantWomen<- function(query1,geo1)
   all3<-gsub("how to ", "", all2)
 
   all4<-gsub("during pregnancy","",all3)
-  all5<-head(all4,5)
+  all5<-head(all4,10)
   df1<-data.frame(all5)
   names(df1)<-geo1
   
@@ -422,36 +645,32 @@ kable(df1, "html") %>%
 
 }
 
-
 ```
+
 
 <table border="1">
 <tr>
 
 <td style="vertical-align:top">`r howTopregnantWomen("How to during pregnancy", "US")`</td>
 
+
+<td style="vertical-align:top">`r howTopregnantWomen("How to during pregnancy", "IN")`</td>
 </tr>
 </table>
 
-#How to pronounce
-```{r}
-setwd("C:/github/GitHub/Capstone/Capstone/data")
-states2 <- read.csv('US_States.csv', stringsAsFactors = FALSE)
 
-for (i in 1:nrow(states2)) 
-{
-  
-  
-  result<-gtrends("how to pronounce", geo=states2$States1[i], time='2017-01-01 2017-12-31')
-  
-  if(!is.null(result$related_queries))
-  {
-    
-    top<-subset(result$related_queries,result$related_queries$related_queries=='top')$value
-    rising<-subset(result$related_queries,result$related_queries$related_queries=='rising')$value
-    print(paste(states2$States1[i],top[1],rising[1],sep = ","))
-  }
-}
 
-```
+<hr style="border: 2px solid #357FAA;"/>
+
+#Conclusion
+
+
+
+Philosophers speculated about a tool called "cerebroscope," a mythical device that would display a person's thoughts on a screen, people have been looking for tools to expose the workings of human nature. Google Trends data is one of such tool which is an anonymous, categorized, and unbiased sample of Google search data. It tracks trillions of searches per year???,???making it one of the most useful, real-time data indicators of human interest by region and category.  Google Trends is most often used to understand brand health and monitor changes in consumer interests along competitive metrics and factors such as seasonality. Search engine query data offer insights into our life on the smallest possible scale of individual actions. In order to investigate whether Internet search volume is correlated with another aspect of our life, I used search volume data provided by the search engine Google. I tried to focus on the incredible amount of information about the localized behavior we can get from Google Trends. We got answers to questions we never asked from people we never considered. On top of that, we got information on historic behavior - we can't ask panels how they felt many years ago!
+
+One of the reasons why I preferred to use Google Trends as my source for information instead of the standard surveys or focus groups is the fact that we are leveraging the largest panel in the world (the internet). It's honest, trusted and not influenced/skewed. Google Trends is arguably the best publicly available data we have. I say more trusted because it is default search engine we all use. If people were using the different search engine then this kind of analysis would have been difficult. I admire Google as a company for keeping this kind of data publicly available for free. Taking the meaning of open [ https://googleblog.blogspot.com/2009/12/meaning-of-open.html ] to next level. Due to this openness, anyone can do analysis with one's own interest. Ideas can come from anyone. Data analysis is no longer restricted elite group of researchers and academias.
+Opportunities are endless. For many people, Google is more than just a simple search engine - it's one of their closest confidants. The evidence is provided by Jeremy Ginsberg that Google Trends data can be used to track influenza-like illness in a population. Because the relative frequency of certain queries is highly correlated with the percentage of physician visits in which a patient presents with influenza-like symptoms, an estimate of weekly influenza activity can be reported. 
+
+This kind of data analysis can answer taboo subjects like what percent of American men are gay? or issues related to child sexual exploitation or child abuse can be analyzed more reliably because the Internet is the first thing we reach out. The advantage of this data source, of course, is that most people are making these searches in private.
+Google Trends offer an unprecedented peek into people's psyches. people can unburden themselves of some wish or fear without a real person reacting in dismay. Most important thing is we should ask the right questions.
 
